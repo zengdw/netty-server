@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- magenta:洋红 -->
+  <!-- boldMagenta:粗红-->
+  <!-- cyan:青色 -->
+  <!-- white:白色 -->
+  <!-- magenta:洋红 -->
+  <property name="CONSOLE_LOG_PATTERN"
+            value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) |%highlight(%thread %-5level) |[%X{userId}] |%green(%logger:%line) |%highlight(%msg%n)"/>
+  <property name="FILE_LOG_PATTERN"
+            value="%date{yyyy-MM-dd HH:mm:ss} |%thread %-5level |[%X{userId}] |%logger:%line |%msg%n"/>
+  <property name="log.base" value="./logs"/>
+  <!-- 文档保留总大小 -->
+  <property name="totalSizeCap" value="10GB"/>
+  <!-- 文档保留天数 -->
+  <property name="maxHistory" value="30"/>
+  <!-- 文件切割大小 -->
+  <property name="maxFileSize" value="50MB"/>
+
+  <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${log.base}/info/log.log</File>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 不接受DEBUG日志 -->
+      <level>DEBUG</level>
+      <onMatch>DENY</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <encoder>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.base}/info/%d{yyyy-MM-dd}/logFile.%d{HH}.%i.log.gz</fileNamePattern>
+      <maxFileSize>${maxFileSize}</maxFileSize>
+      <maxHistory>${maxHistory}</maxHistory>
+      <totalSizeCap>${totalSizeCap}</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <appender name="debugFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.base}/debug/debug.log</file>
+    <!-- 只打印DEBUG日志 -->
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>DEBUG</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.base}/debug/%d{yyyy-MM-dd}/debugFile.%d{HH}.%i.log.gz</fileNamePattern>
+      <maxFileSize>${maxFileSize}</maxFileSize>
+      <maxHistory>${maxHistory}</maxHistory>
+      <totalSizeCap>${totalSizeCap}</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- 异步输出 -->
+  <appender name="ASYNC-INFO" class="ch.qos.logback.classic.AsyncAppender">
+    <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+    <discardingThreshold>0</discardingThreshold>
+    <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+    <queueSize>256</queueSize>
+    <!-- 添加附加的appender,最多只能添加一个 -->
+    <appender-ref ref="logFile"/>
+  </appender>
+  <appender name="ASYNC-DEBUG" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>256</queueSize>
+    <appender-ref ref="debugFile"/>
+  </appender>
+
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="stdout"/>
+    <appender-ref ref="ASYNC-INFO"/>
+    <appender-ref ref="ASYNC-DEBUG"/>
+  </root>
+</configuration>

@@ -1,0 +1,4 @@
+com.jinxin.platform.message.handler.PingMessageHandler
+com.jinxin.platform.message.handler.LogMessageHandler
+com.jinxin.platform.message.handler.NumGenerate
+com.jinxin.platform.message.handler.DefaultMessageHandler

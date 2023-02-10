@@ -1,0 +1,14 @@
+netty:
+  port: 9999
+
+redis:
+  host: 192.168.3.90
+  password: jinxin
+  database: 5
+
+rocketmq:
+  nameserverAddr: 172.31.195.29:9876
+
+id:
+  workerId: 1
+  datacenterId: 1
